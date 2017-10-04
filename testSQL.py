@@ -1,4 +1,4 @@
 #!/usr/bin/python
 #coding UTF-8
 
-print "Test SQL!!!"
+print "Test SQL with SSH!!!"
