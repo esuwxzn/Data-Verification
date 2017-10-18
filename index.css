@@ -38,7 +38,7 @@
 
 
 #login_window_div{
-	margin-top: 50px;
+	margin-top: 25px;
 	margin-left: auto;
 	/*border: 1px solid black;*/
 	align-items: center;
@@ -86,6 +86,7 @@
 	margin-left: 35px;
 	margin-right: 20px;
 	font-size: 16px;
+	line-height: 16px;
 	font-style: bold;
 	width: 60px;
 	height: 25px;
