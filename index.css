@@ -1,0 +1,93 @@
+*{
+	padding: 0;
+	margin: 0;
+	font-family: 微软雅黑;
+	background-color: #eef;
+	color: #363636;
+
+}
+
+
+#logo{
+	height: 200px;
+}
+
+#logo_div{
+	align-items: center;
+	padding-top: 50px;
+	height: 200px;
+	text-align: center;
+}
+
+
+#title{
+	font-size: 40px;
+	font-style: bold;
+	font-family: 微软雅黑;
+	line-height: 50px;
+}
+
+#title_div{
+	margin:0 auto;
+	margin-top: 50px;
+	8/*border:1px solid #000;*/
+	padding-top: 10px;
+	padding-bottom: 10px;
+	text-align: center;
+}
+
+
+#login_window_div{
+	margin-top: 50px;
+	margin-left: auto;
+	/*border: 1px solid black;*/
+	align-items: center;
+
+}
+
+#user_password_div{
+	text-align: center;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	
+}
+
+.user_password_class{
+	font-size: 24px;
+	font-style: bold;
+	font-family: 微软雅黑;
+}
+
+/*#username_text{
+
+}*/
+
+#password_text{
+	margin-left: 1em;
+}
+
+.user_pass_input_class{
+
+	height: 20px;
+	border-style: ridge;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+
+#login_button_div{
+	text-align: center;
+	/*border: 1px solid black;*/
+	margin-top: 10px;
+	align-items: center;
+}
+
+.button{
+	margin-left: 35px;
+	margin-right: 20px;
+	font-size: 16px;
+	font-style: bold;
+	width: 60px;
+	height: 25px;
+}
+
