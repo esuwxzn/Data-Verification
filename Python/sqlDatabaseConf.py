@@ -15,15 +15,15 @@ class databaseList:
 
     def __init__(self):
         #Transaction database
-        self.transactionDatabase = 'TEST'
+        self.transactionDatabase = 'CUSTOMER'
         
         self.inwardTable = 'inward'
         self.outwardTable = 'outward'
         
         #Exchange rate database
-        self.exchangeRateDatabase = 'EXCHANGERATE'
+        self.exchangeRateDatabase = 'CUSTOMER'
         
-        self.exchangeRateTable = 'exchangerate'
+        self.exchangeRateTable = 'fx_rate_2017'
         
         #Customer information
         self.customerInfoDatabase = 'CUSTOMERINFO'

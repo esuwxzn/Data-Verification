@@ -13,7 +13,6 @@ from sqlDatabaseConf import databaseList
 class taxReportStatistic:
 
     def __init__(self):
-        self.SQL = sqlOperation()
         #self.fileGenerator = fileGenerator()
 
         self.data = taxStatisticData()
@@ -37,6 +36,7 @@ class taxReportStatistic:
         database = ''
         sql = ''
 
+        SQL = sqlOperation()
 
         if queryType == 'INWARD' or queryType == 'OUTWARD':
             
@@ -58,11 +58,9 @@ class taxReportStatistic:
             print "ERROR:Unsupported query type..."
             exit(0)
         
-        print database
-        print sql
-        self.SQL.run(database, sql)
+        SQL.run(database, sql)
 
-        return self.SQL.data
+        return SQL.data
 
 
     def retrieveData(self):
