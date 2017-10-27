@@ -66,7 +66,7 @@ class taxReportStatistic:
     def retrieveData(self):
         
         self.data.inwardData = self.queryData('INWARD')
-#        self.data.outwardData = self.queryData('OUTWARD')
+        self.data.outwardData = self.queryData('OUTWARD')
 #        self.data.exchangeRateData = self.queryData('EXCHANGEREATE')
 #        self.data.accountInfoData = self.queryData('ACCOUNTINFO') 
         #self.customerInfoData = self.queryData('CUSTOMERINFO')
