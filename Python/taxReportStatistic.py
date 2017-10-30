@@ -28,12 +28,10 @@ class taxReportStatistic:
         if queryType == 'INWARD':
 
             return "SELECT DP03_VALU_DATE, CP03_EXTN_REF_NO, FROM_CON, CP03_PAY_AMT, CP03_PAY_CURR, CP03_BEN_CUS_NO FROM %s" % table
-        #self.database.transaction.inwardTable
 
         elif queryType == 'OUTWARD':
 
-            return "SELECT DP04_VALU_DATE, CP04_EXTN_REF_NO, TO_CON, CP04_PAY_AMT, CP04_PAY_CURR, SENDER FROM %s" % table 
-        #self.database.transaction.outwardTable
+            return "SELECT DP04_VALU_DATE, CP04_EXTN_REF_NO, TO_CON, CP04_PAY_AMT, CP04_PAY_CURR, CP04_MSG_DATA, CP04_BENF_DETL, SENDER FROM %s" % table 
 
 
 
