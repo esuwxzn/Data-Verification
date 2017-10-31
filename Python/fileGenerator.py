@@ -9,7 +9,7 @@ class fileGenerator:
 
         self.data = inputData
         self.header = excelHeader()
-        self.wb = Workbook()
+        self.wb = ''
 
 
     def writeDataToSheet(self, inputData, sheet, header):
@@ -24,6 +24,8 @@ class fileGenerator:
 
 
     def writeDataToFile(self, fileType):
+
+        self.wb = Workbook()
 
         if fileType == 'INWARD':
             titleToReport = self.header.inwardSheetTitle.toReport
