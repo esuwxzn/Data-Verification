@@ -25,14 +25,10 @@ class fileGenerator:
 
     def writeDataToFile(self, fileType):
 
-        #if fileType == 'INWARD':
-        #    sheet = self.wb.worksheets[0]
-        #elif fileType == 'OUTWARD':
-        #    sheet = self.wb.worksheets[1]
-       
         if fileType == 'INWARD':
             titleToReport = self.header.inwardSheetTitle.toReport
             titleToManual = self.header.inwardSheetTitle.toManual
+            header = self.header.inwardHeader
             #filename = 'Inward_Remittance_' + time.strftime("%Y%m%d_%X", time.localtime()) + '.xlsx'
             filename = 'Inward_Remittance_' + time.strftime("%Y%m%d", time.localtime()) + '.xlsx'
 
@@ -42,6 +38,8 @@ class fileGenerator:
         elif fileType == 'OUTWARD':
             titleToReport = self.header.outwardSheetTitle.toReport
             titleToManual = self.header.outwardSheetTitle.toManual
+            header = self.header.outwardHeader
+            
             filename = 'Outward_Remittance_' + time.strftime("%Y%m%d", time.localtime()) + '.xlsx'
 
             dataToReport = self.data.outwardData.dataToReport
@@ -51,13 +49,13 @@ class fileGenerator:
         index = 0
         sheet = self.wb.worksheets[index]
         sheet.title = titleToReport 
-        self.writeDataToSheet(dataToReport, sheet, self.header.inwardHeader)
+        self.writeDataToSheet(dataToReport, sheet, header)
 
         index += 1
         self.wb.create_sheet()
         sheet = self.wb.worksheets[index]
         sheet.title = titleToManual
-        self.writeDataToSheet(dataToManual, sheet, self.header.inwardHeader)
+        self.writeDataToSheet(dataToManual, sheet, header)
 
         #filename = r'./%s' % filename
         print filename
@@ -65,5 +63,5 @@ class fileGenerator:
 
 
     def run(self):
-        #self.writeDataToFile('INWARD')
+        self.writeDataToFile('INWARD')
         self.writeDataToFile('OUTWARD')

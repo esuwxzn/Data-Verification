@@ -103,11 +103,8 @@ class taxReportStatistic:
         fg = fileGenerator(data)
         fg.run()
 
-    def run(self, startTime, endTime):#Start time and end time is not handled here.
+    def run(self, start, end):#Start time and end time is not handled here.
 
         self.retrieveData()
         self.processData(self.data)
         self.writeDataToFile(self.processedTransData)
-
-a = taxReportStatistic()
-a.run(1,2)

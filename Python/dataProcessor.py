@@ -27,18 +27,75 @@ class dataProcessor:
             currency = queryInfo['currency']
             date = queryInfo['date']
             #table = self.database.exchangeRateTable
-            return 'SELECT %s FROM %s WHERE DATE = %s' % (currency, table, date)
+            #return 'SELECT %s FROM %s WHERE DATE = %s' % (currency, table, date)
+            return 'SELECT %s FROM %s WHERE DATE = %s' %\
+                    (queryInfo['currency'],\
+                     queryInfo['table'],\
+                     queryInfo['date'])
         
         elif queryType == 'TAXCODE':
             key = queryInfo['key']
             CIF = queryInfo['CIF']
-            return 'SELECT %s FROM %s WHERE CIF  = %s' % (key, table, CIF)
+            #return 'SELECT %s FROM %s WHERE CIF  = %s' % (key, table, CIF)
+            return 'SELECT %s FROM %s WHERE CIF  = %s' %\
+                    (queryInfo['key'],\
+                     queryInfo['table'],\
+                     queryInfo['CIF'])
 
         elif queryType == 'CIF':
             customer_acc_key = queryInfo['customer_acc_key']
             account_number = queryInfo['account_number']
             cif_key = queryInfo['cif_key']
-            return 'SELECT %s FROM %s WHERE %s = %s' % (cif_key, table, customer_acc_key, account_number)
+            #return 'SELECT %s FROM %s WHERE %s = %s' % (cif_key, table, customer_acc_key, account_number)
+            return 'SELECT %s FROM %s WHERE %s = %s' % \
+                    (queryInfo['cif_key'],\
+                     queryInfo['table'],\
+                     queryInfo['customer_acc_key'],\
+                     queryInfo['account_number'])
+
+        elif queryType == 'CUSTOMERINFO':
+            title = queryInfo['title']
+            street = queryInfo['street']
+            area = queryInfo['area']
+            city = queryInfo['city']
+            country = queryInfo['country']
+            post = queryInfo['post']
+            personal_number = queryInfo['id']
+            org_num = queryInfo['org_num']
+
+            return 'SELECT %s, %s, %s, %s, %s, %s, %s FROM %s WHERE %s = %s' %\
+                    (queryInfo['title'],\
+                     queryInfo['street'],\
+                     queryInfo['area'],\
+                     queryInfo['city'],\
+                     queryInfo['country'],\
+                     queryInfo['post'],\
+                     queryInfo['id'],\
+                     queryInfo['table'],\
+                     queryInfo['cif_key'],\
+                     queryInfo['CIF'])
+
+
+
+
+
+
+
+    def processCustomerInfo(self, customerInfo):
+        
+        title = customerInfo[0][0]
+
+        address = customerInfo[0][1] + ' ' +\
+                  customerInfo[0][2] + ' ' +\
+                  customerInfo[0][3] + ' ' +\
+                  customerInfo[0][4] + ' ' +\
+                  customerInfo[0][5]
+        
+#        print address
+        
+        return [customerInfo[0][6], customerInfo[0][6], address]
+
+
 
 
     def retrieveData(self, **info):
@@ -58,22 +115,26 @@ class dataProcessor:
             database = self.database.exchangeRate.exchangeRateDatabase
         
         elif Type == 'CUSTOMERINFO':
-            queryInfo = {'queryType':Type, 'key':'TAX_C', 'CIF':info['CIF'], 'table':self.database.customerInfo.customerInfoTable}
+
+            #The orginization number need to be updated.
+            queryInfo = {'queryType':Type, 'title':'TITLE', 'cif_key':'CIF', 'CIF':info['CIF'], 'street':'STREET', 'area':'AREA', 'city':'CITY', 'country':'COUNTRY', 'post':'POST', 'id':'ID_N', 'org_num':'XXX' , 'table':self.database.customerInfo.customerInfoTable}
             database = self.database.customerInfo.customerInfoDatabase
 
         else:
             print "Unsupport query type in retrieveData()..."
             exit(0)
         
-
         SQL = sqlOperation()
 
         sql = self.generateQuerySQL(**queryInfo)
-        
+#        print sql 
         SQL.run(database, sql) 
        
-        if len(SQL.data) != 0:
+        if len(SQL.data) != 0 and Type != 'CUSTOMERINFO':
             return SQL.data[0][0]
+        elif Type == 'CUSTOMERINFO':
+#            print SQL.data
+            return self.processCustomerInfo(SQL.data)
         else:
             return ''
 
@@ -81,32 +142,41 @@ class dataProcessor:
 
     def retrieveReason(self, message):
 
-        return re.findall(r':70:(.+?):71', message)
+        return '\n'.join(re.findall(r':70:(.+?):71', message))
 
 
-
-    def updateRow(self, **updateInfo, row):
+    def updateRow(self, row, **updateInfo):
    
         row = list(row)
+        print row
+        Type = updateInfo['type']
 
         if Type == 'INWARD':
-            row.append('RATE = X')
-            row.append('SEK = X')
-            row.append('Organisation number = X')
-            row.append('Personal number = X')
-            row.append('Address = X')
-            row.append('Tax code = X')
+
+            row.append(updateInfo['exchangeRate'])
+            row.append(updateInfo['SEK'])
+            row.append(updateInfo['org_number'])
+            row.append(updateInfo['personal_number'])
+            row.append(updateInfo['address'])
+            row.append(updateInfo['tax_code'])
         
         elif Type == 'OUTWARD':
 
             row[5] = updateInfo['reason']
+            
+            
+            #Remove the sender from the list
+            del row[6]
+            
+            #Insert the CIF
             row.insert(6, updateInfo['CIF'])
 
-            row.append(updateInfo['exchangeRate']
-            row.append(updateInfo['SEK']
-            row.append(updateInfo['org_number']
-            row.append(updateInfo['personal_number']
-            row.append(updateInfo['address']
+            row.append(updateInfo['exchangeRate'])
+            row.append(updateInfo['SEK'])
+            row.append(updateInfo['org_number'])
+            row.append(updateInfo['personal_number'])
+            row.append(updateInfo['address'])
+            row.append(updateInfo['tax_code'])
         
         return tuple(row)
 
@@ -123,17 +193,53 @@ class dataProcessor:
     def processInwardData(self, inputData):
 
         for row in inputData: 
+        
+            retrieveInfo = {}
+            updateInfo = {}            
+            
             valueDate    = row[0]
             from_country = row[2]
+            amount       = row[3]
             currency     = row[4]
             cif_read     = row[5]
-            fx_rate_index = 6
-            SEK_index = 7
 
-            updatedRow = self.updateRow('INWARD', row)
-            #print updatedRow
-            updatedRow = self.convertCurToSEK(valueDate, currency, fx_rate_index, SEK_index, updatedRow)
+            if len(cif_read) != 0:
+
+                retrieveInfo = {'type':'TAXCODE', 'CIF': cif_read}
+                tax_code = self.retrieveData(**retrieveInfo)
+
+            else:
+                tax_code = ''
+
+            if currency != 'SEK' and currency != '':
+                retrieveInfo = {'type':'EXCHANGERATE', 'valueDate': valueDate, 'currency':currency}
+                exchangeRate = self.retrieveData(**retrieveInfo)
+                SEK = float(amount) * exchangeRate
+            elif currency == 'SEK':
+                SEK = amount
+            else:
+                SEK = ''
+
+
+            #Customer Info:Org number, personal number or address
+            if cif_read != '':
+                retrieveInfo = {'type':'CUSTOMERINFO', 'CIF':cif_read}
+                customerInfo = self.retrieveData(**retrieveInfo)
+            else:
+                customerInfo = ('', '', '')
             
+
+            updateInfo['type'] = 'INWARD'
+            updateInfo['exchangeRate'] = exchangeRate
+            updateInfo['SEK'] = SEK 
+            updateInfo['tax_code'] = tax_code
+            updateInfo['org_number'] = customerInfo[0]
+            updateInfo['personal_number'] = customerInfo[1]
+            updateInfo['address'] = customerInfo[2]
+
+            updatedRow = self.updateRow(row, **updateInfo)
+
+
             #print updatedRow
             if cif_read != '' and from_country != 'SE' and from_country != '00':
                 self.insertToOutputData(self.processedData.inwardData.dataToReport, cif_read, updatedRow)
@@ -147,7 +253,7 @@ class dataProcessor:
         for row in inputData:
 
             retrieveInfo = {}
-            updatedInfo = {} 
+            updateInfo = {} 
             
 
             valueDate      = row[0]
@@ -157,7 +263,6 @@ class dataProcessor:
             message        = row[5]
             account_number = row[7]
             
-            print row
             if account_number.isdigit():
 
                 retrieveInfo = {'type':'CIF', 'account_number': account_number}
@@ -175,21 +280,26 @@ class dataProcessor:
                 cif_read = ''
                 tax_code = ''
             
-            if currency != 'SEK':
-                retrieveInfo = {'type':'EXCHANGERATE', 'valueData': valueDate, 'currency':currency}
+            if currency != 'SEK' and currency != '':
+                retrieveInfo = {'type':'EXCHANGERATE', 'valueDate': valueDate, 'currency':currency}
                 exchangeRate = self.retrieveData(**retrieveInfo)
-                SEK = amount * exchangeRate
-            else:
+                SEK = float(amount) * exchangeRate
+            elif currency == 'SEK':
                 SEK = amount
+            else:
+                SEK = ''
            
 
             #Customer Info:Org number, personal number or address
-            retrieveInfo['type':'CUSTOMERINFO', 'CIF':cif_read]
-            customerInfo = self.retrieveData(**retrieveInfo)
-
-
-            reason = self.retrieveReason(message)
+            if cif_read != '':
+                retrieveInfo = {'type':'CUSTOMERINFO', 'CIF':cif_read}
+                customerInfo = self.retrieveData(**retrieveInfo)
+            else:
+                customerInfo = ('', '', '')
             
+            reason = self.retrieveReason(message)
+           
+
             updateInfo['type'] = 'OUTWARD'
             updateInfo['reason'] = reason
             updateInfo['CIF'] = cif_read
@@ -200,19 +310,16 @@ class dataProcessor:
             updateInfo['personal_number'] = customerInfo[1]
             updateInfo['address'] = customerInfo[2]
 
-            
-            updatedRow = self.updateRow(**updateInfo, row)
+            updatedRow = self.updateRow(row, **updateInfo)
 
-            #updatedRow = self.insertCIFandTaxCode(cif_read, cif_index, tax_code, tax_code_index, updatedRow)
-            #updatedRow = self.convertCurToSEK(valueDate, currency, fx_rate_index, SEK_index, row)
 
-            #updatedRow = row
-
-            #if cif_read != '' and to_country != 'SE' and from_country != '00':
-            #    self.insertToOutputData(self.processedData.inwardData.dataToReport, cif_read, updatedRow)
+            if cif_read != '' and (to_country != 'SE' or tax_code != '99'):
+                self.insertToOutputData(self.processedData.outwardData.dataToReport, cif_read, updatedRow)
                 
-            #else:
-            #    self.insertToOutputData(self.processedData.inwardData.dataToManual, cif_read, updatedRow)
+            else:
+                self.insertToOutputData(self.processedData.outwardData.dataToManual, cif_read, updatedRow)
+
+
 
     def distributeTransaction(self):
         self.processInwardData(self.inputData.inwardData)
@@ -222,5 +329,4 @@ class dataProcessor:
     def run(self):
         
         self.distributeTransaction()
-        #self.distributeTransaction('OUTWARD')
         return self.processedData

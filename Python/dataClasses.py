@@ -65,9 +65,13 @@ class sheetTitleOutward:
 class excelHeader:
 
     def __init__(self):
-        self.inwardHeader = ['Transaction Value Date(663)', 'Ref. NO.', 'From(662)', 'AMOUNT', 'Currency(664)', 'Customer', 'Rate', 'SEK', 'Origanisation Number/ID', 'Personal Number', 'Address', 'Tax Code']
+        self.inwardHeader = ['Transaction Value Date(663)', 'Ref. NO.', 'From(662)', 'AMOUNT', 'Currency(664)',\
+                             'Customer', 'Rate', 'SEK', 'Origanisation Number/ID', 'Personal Number', 'Address',\
+                             'Tax Code']
 
-        self.outwardHeader = ['Transaction Value Date(663)', 'Ref. NO.', 'To(662)', 'AMOUNT(660)', 'Currency(664)', 'Reasons(661)', 'Customer(671)', 'Beneficiary', 'SEK', 'Origanisation Number/ID', 'Personal Number', 'Address', 'Tax Code']
+        self.outwardHeader = ['Transaction Value Date(663)', 'Ref. NO.', 'To(662)', 'AMOUNT(660)', 'Currency(664)',\
+                              'Reasons(661)', 'Customer(671)', 'Beneficiary', 'EX RATE', 'SEK', 'Origanisation Number/ID',\
+                              'Personal Number', 'Address', 'Tax Code']
 
         self.inwardSheetTitle = sheetTitleInward()
         self.outwardSheetTitle = sheetTitleOutward()
