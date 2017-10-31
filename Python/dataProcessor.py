@@ -127,13 +127,13 @@ class dataProcessor:
         SQL = sqlOperation()
 
         sql = self.generateQuerySQL(**queryInfo)
-#        print sql 
+        #print sql 
         SQL.run(database, sql) 
        
         if len(SQL.data) != 0 and Type != 'CUSTOMERINFO':
             return SQL.data[0][0]
         elif Type == 'CUSTOMERINFO':
-#            print SQL.data
+            #print SQL.data
             return self.processCustomerInfo(SQL.data)
         else:
             return ''
@@ -148,8 +148,9 @@ class dataProcessor:
     def updateRow(self, row, **updateInfo):
    
         row = list(row)
-        print row
+        
         Type = updateInfo['type']
+        #print row
 
         if Type == 'INWARD':
 
@@ -164,6 +165,8 @@ class dataProcessor:
 
             row[5] = updateInfo['reason']
             
+            #if len(updateInfo['CIF']) == 0:
+            #    print row[6]
             
             #Remove the sender from the list
             del row[6]
@@ -262,9 +265,10 @@ class dataProcessor:
             currency       = row[4]
             message        = row[5]
             account_number = row[7]
-            
-            if account_number.isdigit():
+           
 
+            if len(account_number) != 0 and account_number != 'NEED_TO_BE_CHECKED':
+                
                 retrieveInfo = {'type':'CIF', 'account_number': account_number}
                 cif_read = self.retrieveData(**retrieveInfo) 
                 
@@ -275,7 +279,7 @@ class dataProcessor:
 
                 else:
                     tax_code = ''
-
+            
             else:
                 cif_read = ''
                 tax_code = ''
@@ -322,7 +326,7 @@ class dataProcessor:
 
 
     def distributeTransaction(self):
-        self.processInwardData(self.inputData.inwardData)
+        #self.processInwardData(self.inputData.inwardData)
         self.processOutwardData(self.inputData.outwardData)
     
     

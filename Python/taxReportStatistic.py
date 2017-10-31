@@ -61,7 +61,7 @@ class taxReportStatistic:
             
             sql = self.generateQuerySQL(**queryInfo)
 
-            print sql
+            #print sql
 
         elif queryType == 'EXCHANGERATE':
             database = self.database.exchangeRate.exchangeRateDatabase
